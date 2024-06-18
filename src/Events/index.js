@@ -58,6 +58,7 @@ const Events = () => {
   };
 
   const getTopPositionAndHeight = (start, duration) => {
+    // Total over 12 hours
     const top = ((transformStringTimeToNumber(start) - 9)/12) * dimensions.height;
     const height = duration/12 * dimensions.height;
 
@@ -77,12 +78,12 @@ const Events = () => {
       disableGutters 
       sx={{border: '1px solid blue', position: 'relative', height: '100vh'}}
     >
-      <Box sx={{...defaultEventCss, ...getTopPositionAndHeight('15:00', 1)}}> Event : 12h00 </Box>
+      <Box sx={{...defaultEventCss, ...getTopPositionAndHeight('15:00', 1)}}> Event : 15h00 </Box>
     </Container>
   );
 };
 
-
+// CSS ----------------------------------------------------------------------
 const defaultEventCss = {
   border: '1px solid red', 
   position: 'absolute', 
