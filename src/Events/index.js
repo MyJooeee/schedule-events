@@ -23,9 +23,10 @@ const Events = () => {
       });
     }
 
-    // Data process
+    /* Data process
     const sortedData  = sortDataByKeys(data);
     dataProcessing(sortedData);
+    */
     
   }, []);
 
@@ -37,6 +38,7 @@ const Events = () => {
     return hours + minutes;
   };
   
+  /*
   const castStringToInt = (string) => {
     return parseInt(string.replace(':', ''), 10);
   };
@@ -56,6 +58,7 @@ const Events = () => {
   const dataProcessing = (data) => {
     data.forEach((element) => console.log(element));
   };
+  */
 
   const getTopPositionAndHeight = (start, duration) => {
     // Total over 12 hours
@@ -69,6 +72,7 @@ const Events = () => {
   };
 
   console.log('dimensions', dimensions);
+  console.log('data', data);
 
   // JSX ---------------------------------------------------------------------
   return (
@@ -79,6 +83,12 @@ const Events = () => {
       sx={{border: '1px solid blue', position: 'relative', height: '100vh'}}
     >
       <Box sx={{...defaultEventCss, ...getTopPositionAndHeight('15:00', 1)}}> Event : 15h00 </Box>
+      <Box sx={{...defaultEventCss, ...getTopPositionAndHeight('09:00', 1)}}> Event : 09h00 </Box>
+      <Box sx={{...defaultEventCss, ...getTopPositionAndHeight('10:00', 1)}}> Event : 10h00 </Box>
+      <Box sx={{...defaultEventCss, ...getTopPositionAndHeight('11:00', 1)}}> Event : 11h00 </Box>
+      <Box sx={{...defaultEventCss, ...getTopPositionAndHeight('12:00', 1)}}> Event : 12h00 </Box>
+      <Box sx={{...defaultEventCss, ...getTopPositionAndHeight('13:00', 1)}}> Event : 13h00 </Box>
+      <Box sx={{...defaultEventCss, ...getTopPositionAndHeight('14:00', 1)}}> Event : 14h00 </Box>
     </Container>
   );
 };
