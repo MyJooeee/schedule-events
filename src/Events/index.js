@@ -2,7 +2,7 @@
 // Core
 import { useEffect, useState, useRef } from "react";
 // Components
-import { Box, Container } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 // Logic
 import events from '../Data/index.json';
 
@@ -181,7 +181,9 @@ const Events = () => {
                 width: preparedEvent.width
               }
           }}> 
-          {preparedEvent.start}, {preparedEvent.duration}
+          <Typography variant='caption'> 
+            Start : {preparedEvent.start}, Duration : {preparedEvent.duration} 
+          </Typography>
         </Box>
       ))}
     </Container>
