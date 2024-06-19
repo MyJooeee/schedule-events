@@ -26,7 +26,6 @@ const Events = () => {
   
 
   // Functions ---------------------------------------------------------------------
-
   const castStringToInt = (string) => {
     return parseInt(string.replace(':', ''), 10);
   };
@@ -52,17 +51,19 @@ const Events = () => {
   };
 
   // Set top, left and height on one event
-  const getTopLeftHeightOnEvent = (event, nbFound = 1, index = 0) => {
+  const getTopLeftHeightOnEvent = (event, nbOverlaps = 1, index = 0) => {
 
-    // Total over 12 hours
+    // Total over 12 hours : 09:00 am to 09:00 pm
     const top = Math.round(((stringTimeToHours(event.start) - 9)/12) * dimensions.height);
     // duration/12/60
     const height = Math.round((event.duration/720) * dimensions.height);
 
     let left = 0;
-    if (nbFound > 1 && index > 0) {
-      left = Math.round((index/nbFound) * dimensions.width);
+    if (nbOverlaps > 1 && index > 0) {
+      left = Math.round((index/nbOverlaps) * dimensions.width);
     }
+
+    const width = Math.round(dimensions.width/nbOverlaps) - 10 // horizontal space between events
 
     return {
       id: event.id,
@@ -71,36 +72,44 @@ const Events = () => {
       top: `${top}px`,
       left: `${left}px`,
       height: `${height}px`,
-      width: Math.round(dimensions.width/nbFound)
+      width: `${width}px` 
     };
   
   };
 
-  const checkIfEventsOverlaps = (currentEvent) => {
+  const checkIfEventOverlaps = (currentEvent) => {
 
     const startCurrentEvent = stringTimeToHours(currentEvent.start);
     const endCurrentEvent = stringTimeToHours(currentEvent.start) + currentEvent.duration/60;
 
     const founds = events.filter((element) => {
       
+      // If currentEvent starts to the same time with another event
       if (element.start === currentEvent.start) return true;
 
       const startElement = stringTimeToHours(element.start);
       const endElement = stringTimeToHours(element.start) + element.duration/60;
       
-      if (startCurrentEvent < endElement && endCurrentEvent > endElement) {
+      // If event is included in currentEvent
+      if (startCurrentEvent <= startElement && endCurrentEvent >= endElement) {
+        return true;
+      }
+      
+      // If currentEvent is included in event
+      if (startCurrentEvent > startElement && endCurrentEvent < endElement) {
         return true;
       }
 
+      // If part of the start of the currentEvent overlaps with another event
+      if (startCurrentEvent < endElement && endCurrentEvent > endElement) {
+        return true;
+      }
+      // If part of the end of the currentEvent overlaps with another event
       if (endCurrentEvent > startElement && startCurrentEvent < startElement) {
         return true;
       }
 
-      // Case inclusion
-      if (startCurrentEvent <= startElement && endCurrentEvent >= endElement) {
-        return true;
-      }
-
+      // If no matching with rules
       return false;
     });
 
@@ -108,25 +117,24 @@ const Events = () => {
   }
 
   const setTopLeftHeightOnEvents = (events) => {
-    // Copy of events
     let preparedEvents = [];
     let idsTreated = [];
     events.forEach((currentEvent) => {
 
-      
+      // Do not process events already processed
       if (!idsTreated.includes(currentEvent.id)) {
-        const founds = checkIfEventsOverlaps(currentEvent);
-        const nbFound = founds.length;
-        if (nbFound > 1) {
-          
-          const ids = founds.map((e) => e.id);
+        const overlaps = checkIfEventOverlaps(currentEvent);
+        const nbOverlaps = overlaps.length;
+        // Overlap between at least two events
+        if (nbOverlaps > 1) {
+          const ids = overlaps.map((e) => e.id);
           idsTreated.push(...ids);
   
-          founds.forEach((found, idx) => {
-            preparedEvents.push(getTopLeftHeightOnEvent(found, nbFound, idx));
-            
+          overlaps.forEach((eventOverlaps, index) => {
+            preparedEvents.push(getTopLeftHeightOnEvent(eventOverlaps, nbOverlaps, index));
           });
-  
+        
+        // The event does not overlap with other events
         } else {
           preparedEvents.push(getTopLeftHeightOnEvent(currentEvent));
         }
@@ -136,10 +144,21 @@ const Events = () => {
     return preparedEvents;
   };
 
-  const sortedEvents = sortDataByKeys(events);
+  const removeDuplicatesObject = (events) => {
+    const uniqueObject = {};
+    events.forEach(item => {
+      uniqueObject[item.id] = item;
+    });
+    return Object.values(uniqueObject);
+  }
+  
+  // Clean events (i have seen 2 duplicates, open to discuss on this :))
+  const cleanedEvents = removeDuplicatesObject(events)
+  // Sort events
+  const sortedEvents = sortDataByKeys(cleanedEvents);
+  // Set top, left, height and width for each events
   const preparedEvents = setTopLeftHeightOnEvents(sortedEvents);
 
-  console.log(preparedEvents);
 
   // JSX ---------------------------------------------------------------------
   return (
@@ -147,7 +166,7 @@ const Events = () => {
       ref={refContainer}
       maxWidth={false} 
       disableGutters 
-      sx={{border: '1px solid red', position: 'relative', height: '100vh', p: 0}}
+      sx={{border: '1px solid red', position: 'relative', height: '100vh', p:0}}
     >
 
       {preparedEvents && preparedEvents.map((preparedEvent, idx) => (
