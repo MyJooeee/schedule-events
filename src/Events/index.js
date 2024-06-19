@@ -32,30 +32,8 @@ const Events = () => {
     const minutes = parseInt(elements[1], 10)/60;
     return hours + minutes;
   };
-  
-  /*
-  const castStringToInt = (string) => {
-    return parseInt(string.replace(':', ''), 10);
-  };
 
-  const sortDataByKeys = (data) => {
-    data.sort((a, b) => {
-      if (castStringToInt(a.start) > castStringToInt(b.start)) return 1;
-      if (castStringToInt(a.start) < castStringToInt(b.start)) return -1;
-      
-      if (a.duration < b.duration) return 1;
-      if (a.duration > b.duration) return -1;
-      return 0;
-    });
-    return data;
-  };
-
-  const dataProcessing = (data) => {
-    data.forEach((element) => console.log(element));
-  };
-  */
-
-  const getTopPositionAndHeight = (start, duration) => {
+  const getTopLeftHeightOnEvents = (start, duration) => {
     // Total over 12 hours
     const top = ((transformStringTimeToNumber(start) - 9)/12) * dimensions.height;
     // duration/12/60
@@ -75,7 +53,8 @@ const Events = () => {
   const setTopLeftHeightOnEvents = (events) => {
     let preparedEvents = []
     events.forEach((event) => {
-       preparedEvents.push({...event, ...getTopPositionAndHeight(event.start, event.duration)});
+
+       preparedEvents.push({...event, ...getTopLeftHeightOnEvents(event.start, event.duration)});
 
     });
 
@@ -96,11 +75,11 @@ const Events = () => {
       sx={{border: '1px solid blue', position: 'relative', height: '100vh'}}
     >
 
-      {preparedEvents && preparedEvents.map((event, idx) => (
+      {preparedEvents && preparedEvents.map((preparedEvent, idx) => (
         <Box 
           key={idx} 
-          sx={{...defaultEventCss, ...getTopPositionAndHeight(event.start, event.duration)}}> 
-          Start : {event.start} - Duration : {event.duration}
+          sx={{...defaultEventCss, ...preparedEvent}}> 
+          Start : {preparedEvent.start} - Duration : {preparedEvent.duration}
         </Box>
       ))}
     </Container>
