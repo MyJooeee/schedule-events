@@ -75,27 +75,32 @@ const Events = () => {
 
   const setTopLeftHeightOnEvents = (events) => {
     // Copy of events
-    let preparedEvents = []
+    let preparedEvents = [];
+    let idsTreated = [];
     events.forEach((currentEvent) => {
 
+      
       console.log('currentEvent.id', currentEvent.id);
-      const founds = checkIfEventsOverlaps(currentEvent);
-      
-      const nbFound = founds.length;
-      if (nbFound > 1) {
-        founds.forEach((found, idx) => {
-          preparedEvents.push({...currentEvent, ...getTopLeftHeightOnEvent(found, nbFound, idx)});
-          
-        });
+      idsTreated = [...new Set(idsTreated.flat(1))];
+      console.log('idsTreated', idsTreated.flat());
 
-      } else {
-        preparedEvents.push({...currentEvent, ...getTopLeftHeightOnEvent(currentEvent)});
+      if (!idsTreated.includes(currentEvent.id)) {
+        const founds = checkIfEventsOverlaps(currentEvent);
+        const nbFound = founds.length;
+        if (nbFound > 1) {
+  
+          const ids = founds.map((e) => e.id);
+          idsTreated.push(ids);
+  
+          founds.forEach((found, idx) => {
+            preparedEvents.push({...currentEvent, ...getTopLeftHeightOnEvent(found, nbFound, idx)});
+            
+          });
+  
+        } else {
+          preparedEvents.push({...currentEvent, ...getTopLeftHeightOnEvent(currentEvent)});
+        }
       }
-
-
-      
-
-
     });
 
     return preparedEvents;
