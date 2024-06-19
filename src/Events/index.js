@@ -26,8 +26,7 @@ const Events = () => {
   }, []);
 
   // Functions ---------------------------------------------------------------------
-  const transformStringTimeToNumber = (string) => {
-    console.log('string', string);
+  const stringTimeToHours = (string) => {
     const elements = string.split(':');
     const hours = parseInt(elements[0], 10);
     const minutes = parseInt(elements[1], 10)/60;
@@ -35,16 +34,16 @@ const Events = () => {
   };
 
   // Set top, left and height on one event
-  const getTopLeftHeightOnEvent = (event, nbFound = 1, index = null) => {
+  const getTopLeftHeightOnEvent = (event, nbFound = 1, index = 0) => {
 
     // Total over 12 hours
-    const top = Math.round(((transformStringTimeToNumber(event.start) - 9)/12) * dimensions.height);
+    const top = Math.round(((stringTimeToHours(event.start) - 9)/12) * dimensions.height);
     // duration/12/60
     const height = Math.round((event.duration/720) * dimensions.height);
 
     let left = 0;
     if (nbFound > 1 && index > 0) {
-      left = (index/nbFound) * dimensions.width;
+      left = Math.round((index/nbFound) * dimensions.width);
     }
 
     return {
@@ -54,25 +53,48 @@ const Events = () => {
       top: `${top}px`,
       left: `${left}px`,
       height: `${height}px`,
-      width: dimensions.width/nbFound
+      width: Math.round(dimensions.width/nbFound)
     };
   
   };
 
   const checkIfEventsOverlaps = (currentEvent) => {
 
+    const startCurrentEvent = stringTimeToHours(currentEvent.start);
+    const endCurrentEvent = Math.round(stringTimeToHours(currentEvent.start) + currentEvent.duration/60);
+
     const founds = events.filter((element) => {
+      
       if (element.start === currentEvent.start) return true;
-      /*
-      if (
-          transformStringTimeToNumber(element.start) + (element.duration/60) > transformStringTimeToNumber(currentEvent.start)
-          || transformStringTimeToNumber(element.start) < transformStringTimeToNumber(currentEvent.start) + (currentEvent.duration/60)
-        ) {
+
+      const startElement = stringTimeToHours(element.start);
+      const endElement = Math.round(stringTimeToHours(element.start) + element.duration/60);
+
+      
+      if (startCurrentEvent < endElement && endCurrentEvent > endElement) {
+        console.log('je passe ici');
         return true;
       }
-      */
+
+      if (endCurrentEvent > startElement && startCurrentEvent < startElement) {
+        console.log('je passe là');
+        console.log('event', currentEvent);
+        console.log('startCurrentEvent', startCurrentEvent);
+        console.log('endCurrentEvent', endCurrentEvent);
+        return true;
+      }
+
+      // Inclusion
+      if (startCurrentEvent <= startElement && endCurrentEvent >= endElement) {
+        console.log('je passe dans le dernier');
+        return true;
+      }
+
+
       return false;
     });
+
+    console.log('founds', founds);
     return founds;
   }
 
@@ -89,7 +111,6 @@ const Events = () => {
         const founds = checkIfEventsOverlaps(currentEvent);
         const nbFound = founds.length;
         if (nbFound > 1) {
-          console.log('founds', founds);
           
           const ids = founds.map((e) => e.id);
           idsTreated.push(ids);
@@ -104,6 +125,8 @@ const Events = () => {
         }
       }
     });
+
+    console.log('idsTreated', idsTreated);
 
     return preparedEvents;
   };
@@ -134,7 +157,7 @@ const Events = () => {
                 width: preparedEvent.width
               }
           }}> 
-          id : {preparedEvent.id}
+          {preparedEvent.id} | {preparedEvent.start} | {preparedEvent.duration}
         </Box>
       ))}
     </Container>
@@ -144,7 +167,8 @@ const Events = () => {
 // CSS ----------------------------------------------------------------------
 const defaultEventCss = {
   border: '1px solid red', 
-  position: 'absolute'
+  position: 'absolute',
+  width: '100%'
 };
 
 export default Events;
