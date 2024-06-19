@@ -35,7 +35,7 @@ const Events = () => {
   };
 
   // Set top, left and height on one event
-  const getTopLeftHeightOnEvent = (event, nbFound = 0, index = null) => {
+  const getTopLeftHeightOnEvent = (event, nbFound = 1, index = null) => {
 
     // Total over 12 hours
     const top = Math.round(((transformStringTimeToNumber(event.start) - 9)/12) * dimensions.height);
@@ -53,7 +53,8 @@ const Events = () => {
       duration: event.duration,
       top: `${top}px`,
       left: `${left}px`,
-      height: `${height}px`
+      height: `${height}px`,
+      width: dimensions.width/nbFound
     };
   
   };
@@ -129,7 +130,8 @@ const Events = () => {
             ...{
                 top: preparedEvent.top, 
                 left: preparedEvent.left, 
-                height: preparedEvent.height
+                height: preparedEvent.height,
+                width: preparedEvent.width
               }
           }}> 
           id : {preparedEvent.id}
@@ -142,8 +144,7 @@ const Events = () => {
 // CSS ----------------------------------------------------------------------
 const defaultEventCss = {
   border: '1px solid red', 
-  position: 'absolute', 
-  width: '100%'
+  position: 'absolute'
 };
 
 export default Events;
