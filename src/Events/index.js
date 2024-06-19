@@ -147,7 +147,7 @@ const Events = () => {
       ref={refContainer}
       maxWidth={false} 
       disableGutters 
-      sx={{border: '1px solid blue', position: 'relative', height: '100vh'}}
+      sx={{border: '1px solid red', position: 'relative', height: '100vh', p: 0}}
     >
 
       {preparedEvents && preparedEvents.map((preparedEvent, idx) => (
@@ -162,7 +162,7 @@ const Events = () => {
                 width: preparedEvent.width
               }
           }}> 
-          {preparedEvent.id} | {preparedEvent.start} | {preparedEvent.duration}
+          {preparedEvent.start}, {preparedEvent.duration}
         </Box>
       ))}
     </Container>
@@ -171,9 +171,8 @@ const Events = () => {
 
 // CSS ----------------------------------------------------------------------
 const defaultEventCss = {
-  border: '1px solid red', 
-  position: 'absolute',
-  width: '100%'
+  border: '1px solid blue', 
+  position: 'absolute'
 };
 
 export default Events;
