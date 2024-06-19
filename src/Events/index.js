@@ -27,6 +27,7 @@ const Events = () => {
 
   // Functions ---------------------------------------------------------------------
   const transformStringTimeToNumber = (string) => {
+    console.log('string', string);
     const elements = string.split(':');
     const hours = parseInt(elements[0], 10);
     const minutes = parseInt(elements[1], 10)/60;
@@ -41,22 +42,36 @@ const Events = () => {
     // duration/12/60
     const height = Math.round((event.duration/720) * dimensions.height);
 
-    let left;
-    if (nbFound > 1) {
-      if (index === 0) {
-        left = 0;
-      } else {
-        left = (index/nbFound) * dimensions.width
-      }
+    let left = 0;
+    if (nbFound > 1 && index > 0) {
+      left = (index/nbFound) * dimensions.width;
     }
 
     return {
       top: `${top}px`,
       left: `${left}px`,
-      height: `${height}px`
+      height: `${height}px`,
+      treated: true
     };
   
   };
+
+  const checkIfEventsOverlaps = (currentEvent) => {
+
+    const founds = events.filter((element) => {
+      if (element.start === currentEvent.start) return true;
+      /*
+      if (
+          transformStringTimeToNumber(element.start) + (element.duration/60) > transformStringTimeToNumber(currentEvent.start)
+          || transformStringTimeToNumber(element.start) < transformStringTimeToNumber(currentEvent.start) + (currentEvent.duration/60)
+        ) {
+        return true;
+      }
+      */
+      return false;
+    });
+    return founds;
+  }
 
   const setTopLeftHeightOnEvents = (events) => {
     // Copy of events
@@ -64,17 +79,20 @@ const Events = () => {
     events.forEach((currentEvent) => {
 
       console.log('currentEvent.id', currentEvent.id);
-      const founds = events.filter((element) => element.start === currentEvent.start);
+      const founds = checkIfEventsOverlaps(currentEvent);
       
       const nbFound = founds.length;
       if (nbFound > 1) {
         founds.forEach((found, idx) => {
           preparedEvents.push({...currentEvent, ...getTopLeftHeightOnEvent(found, nbFound, idx)});
+          
         });
 
       } else {
         preparedEvents.push({...currentEvent, ...getTopLeftHeightOnEvent(currentEvent)});
       }
+
+
       
 
 
