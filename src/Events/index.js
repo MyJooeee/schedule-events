@@ -79,10 +79,8 @@ const Events = () => {
     let idsTreated = [];
     events.forEach((currentEvent) => {
 
-      
       console.log('currentEvent.id', currentEvent.id);
       idsTreated = [...new Set(idsTreated.flat(1))];
-      console.log('idsTreated', idsTreated.flat());
 
       if (!idsTreated.includes(currentEvent.id)) {
         const founds = checkIfEventsOverlaps(currentEvent);
