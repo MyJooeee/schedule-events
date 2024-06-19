@@ -1,7 +1,7 @@
 
 // Core
 import { useEffect, useState, useRef } from "react";
-import moment from 'moment';
+import moment, { duration } from 'moment';
 // Components
 import { Box, Container } from "@mui/material";
 // Logic
@@ -48,10 +48,12 @@ const Events = () => {
     }
 
     return {
+      id: event.id,
+      start: event.start,
+      duration: event.duration,
       top: `${top}px`,
       left: `${left}px`,
-      height: `${height}px`,
-      treated: true
+      height: `${height}px`
     };
   
   };
@@ -86,17 +88,18 @@ const Events = () => {
         const founds = checkIfEventsOverlaps(currentEvent);
         const nbFound = founds.length;
         if (nbFound > 1) {
-  
+          console.log('founds', founds);
+          
           const ids = founds.map((e) => e.id);
           idsTreated.push(ids);
   
           founds.forEach((found, idx) => {
-            preparedEvents.push({...currentEvent, ...getTopLeftHeightOnEvent(found, nbFound, idx)});
+            preparedEvents.push(getTopLeftHeightOnEvent(found, nbFound, idx));
             
           });
   
         } else {
-          preparedEvents.push({...currentEvent, ...getTopLeftHeightOnEvent(currentEvent)});
+          preparedEvents.push(getTopLeftHeightOnEvent(currentEvent));
         }
       }
     });
@@ -129,7 +132,7 @@ const Events = () => {
                 height: preparedEvent.height
               }
           }}> 
-          Start : {preparedEvent.start} - Duration : {preparedEvent.duration}
+          id : {preparedEvent.id}
         </Box>
       ))}
     </Container>
