@@ -46,6 +46,7 @@ const Events = () => {
 
     return {
       top: `${top}px`,
+      left: '0px',
       height: `${height}px`
     };
   };
@@ -78,7 +79,14 @@ const Events = () => {
       {preparedEvents && preparedEvents.map((preparedEvent, idx) => (
         <Box 
           key={idx} 
-          sx={{...defaultEventCss, ...preparedEvent}}> 
+          sx={{
+            ...defaultEventCss, 
+            ...{
+                top: preparedEvent.top, 
+                left: preparedEvent.left, 
+                height: preparedEvent.height
+              }
+          }}> 
           Start : {preparedEvent.start} - Duration : {preparedEvent.duration}
         </Box>
       ))}
