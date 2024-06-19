@@ -33,29 +33,42 @@ const Events = () => {
     return hours + minutes;
   };
 
-  const getTopLeftHeightOnEvents = (start, duration) => {
-    // Total over 12 hours
-    const top = ((transformStringTimeToNumber(start) - 9)/12) * dimensions.height;
-    // duration/12/60
-    const height = (duration/720) * dimensions.height;
+  const getTopLeftHeightOnEvents = (currentEvent, found) => {
 
-    console.log('duration', duration);
-    console.log('duration/12', duration/12);
-    console.log('dimensions.height', dimensions.height);
-    console.log('height', height);
+    // At least 2 events start at the same time
+    if (found.length > 1) {
 
-    return {
-      top: `${top}px`,
-      left: '0px',
-      height: `${height}px`
-    };
+    // The event is only starting at this time
+    } else {
+      // Total over 12 hours
+      const top = Math.round(((transformStringTimeToNumber(currentEvent.start) - 9)/12) * dimensions.height);
+      // duration/12/60
+      const height = Math.round((currentEvent.duration/720) * dimensions.height);
+
+      return {
+        top: `${top}px`,
+        left: '0px',
+        height: `${height}px`
+      };
+    }
+  
   };
 
   const setTopLeftHeightOnEvents = (events) => {
+    // Copy of events
     let preparedEvents = []
-    events.forEach((event) => {
+    events.forEach((currentEvent) => {
 
-       preparedEvents.push({...event, ...getTopLeftHeightOnEvents(event.start, event.duration)});
+      const found = events.filter((element) => element.start === currentEvent.start);
+
+       preparedEvents.push({...currentEvent, ...getTopLeftHeightOnEvents(currentEvent, found)});
+
+       // Do not reprocess those already treated
+       if (found.length > 1) {
+          const ids = found.map(e => e.id);
+          console.log('ids', ids);
+          preparedEvents = preparedEvents.filter((e) => !ids.includes(e));
+       }
 
     });
 
