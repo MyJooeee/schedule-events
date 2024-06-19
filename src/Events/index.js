@@ -33,24 +33,18 @@ const Events = () => {
     return hours + minutes;
   };
 
-  const getTopLeftHeightOnEvents = (currentEvent, found) => {
+  const getTopLeftHeightOnEvents = (currentEvent) => {
 
-    // At least 2 events start at the same time
-    if (found.length > 1) {
+    // Total over 12 hours
+    const top = Math.round(((transformStringTimeToNumber(currentEvent.start) - 9)/12) * dimensions.height);
+    // duration/12/60
+    const height = Math.round((currentEvent.duration/720) * dimensions.height);
 
-    // The event is only starting at this time
-    } else {
-      // Total over 12 hours
-      const top = Math.round(((transformStringTimeToNumber(currentEvent.start) - 9)/12) * dimensions.height);
-      // duration/12/60
-      const height = Math.round((currentEvent.duration/720) * dimensions.height);
-
-      return {
-        top: `${top}px`,
-        left: '0px',
-        height: `${height}px`
-      };
-    }
+    return {
+      top: `${top}px`,
+      left: '0px',
+      height: `${height}px`
+    };
   
   };
 
@@ -59,16 +53,16 @@ const Events = () => {
     let preparedEvents = []
     events.forEach((currentEvent) => {
 
+      console.log('currentEvent.id', currentEvent.id);
       const found = events.filter((element) => element.start === currentEvent.start);
+      
+      if (found > 1) {
 
-       preparedEvents.push({...currentEvent, ...getTopLeftHeightOnEvents(currentEvent, found)});
+      } else {
+        preparedEvents.push({...currentEvent, ...getTopLeftHeightOnEvents(currentEvent, found)});
+      }
+      
 
-       // Do not reprocess those already treated
-       if (found.length > 1) {
-          const ids = found.map(e => e.id);
-          console.log('ids', ids);
-          preparedEvents = preparedEvents.filter((e) => !ids.includes(e));
-       }
 
     });
 
