@@ -33,16 +33,26 @@ const Events = () => {
     return hours + minutes;
   };
 
-  const getTopLeftHeightOnEvents = (currentEvent) => {
+  // Set top, left and height on one event
+  const getTopLeftHeightOnEvent = (event, nbFound = 0, index = null) => {
 
     // Total over 12 hours
-    const top = Math.round(((transformStringTimeToNumber(currentEvent.start) - 9)/12) * dimensions.height);
+    const top = Math.round(((transformStringTimeToNumber(event.start) - 9)/12) * dimensions.height);
     // duration/12/60
-    const height = Math.round((currentEvent.duration/720) * dimensions.height);
+    const height = Math.round((event.duration/720) * dimensions.height);
+
+    let left;
+    if (nbFound > 1) {
+      if (index === 0) {
+        left = 0;
+      } else {
+        left = (index/nbFound) * dimensions.width
+      }
+    }
 
     return {
       top: `${top}px`,
-      left: '0px',
+      left: `${left}px`,
       height: `${height}px`
     };
   
@@ -54,12 +64,16 @@ const Events = () => {
     events.forEach((currentEvent) => {
 
       console.log('currentEvent.id', currentEvent.id);
-      const found = events.filter((element) => element.start === currentEvent.start);
+      const founds = events.filter((element) => element.start === currentEvent.start);
       
-      if (found > 1) {
+      const nbFound = founds.length;
+      if (nbFound > 1) {
+        founds.forEach((found, idx) => {
+          preparedEvents.push({...currentEvent, ...getTopLeftHeightOnEvent(found, nbFound, idx)});
+        });
 
       } else {
-        preparedEvents.push({...currentEvent, ...getTopLeftHeightOnEvents(currentEvent, found)});
+        preparedEvents.push({...currentEvent, ...getTopLeftHeightOnEvent(currentEvent)});
       }
       
 
