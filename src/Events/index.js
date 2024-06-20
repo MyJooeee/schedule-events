@@ -120,17 +120,17 @@ const Events = () => {
     let preparedEvents = [];
     let idsTreated = [];
     events.forEach((currentEvent) => {
-
+      
       // Do not process events already processed
       if (!idsTreated.includes(currentEvent.id)) {
         const overlaps = checkIfEventOverlaps(currentEvent);
+        // Do not process event already processed
+        const overlapsFiltered = overlaps.filter((element) => !idsTreated.includes(element.id));  
         const nbOverlaps = overlaps.length;
         // Overlap between at least two events
         if (nbOverlaps > 1) {
-          const ids = overlaps.map((e) => e.id);
-          idsTreated.push(...ids);
-  
-          overlaps.forEach((eventOverlaps, index) => {
+          overlapsFiltered.forEach((eventOverlaps, index) => {
+            idsTreated.push(eventOverlaps.id);
             preparedEvents.push(getTopLeftHeightOnEvent(eventOverlaps, nbOverlaps, index));
           });
         
@@ -144,18 +144,9 @@ const Events = () => {
     return preparedEvents;
   };
 
-  const removeDuplicatesObject = (events) => {
-    const uniqueObject = {};
-    events.forEach(item => {
-      uniqueObject[item.id] = item;
-    });
-    return Object.values(uniqueObject);
-  }
   
-  // Clean events (i have seen 2 duplicates, open to discuss on this :))
-  const cleanedEvents = removeDuplicatesObject(events)
   // Sort events
-  const sortedEvents = sortDataByKeys(cleanedEvents);
+  const sortedEvents = sortDataByKeys(events);
   // Set top, left, height and width for each events
   const preparedEvents = setTopLeftHeightOnEvents(sortedEvents);
 
