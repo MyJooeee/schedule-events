@@ -175,7 +175,7 @@ const Events = () => {
               }
           }}> 
           <Typography variant='caption'> 
-            Start : {preparedEvent.start}, Duration : {preparedEvent.duration}.
+            {preparedEvent.start}, {preparedEvent.duration}.
           </Typography>
         </Box>
       ))}
