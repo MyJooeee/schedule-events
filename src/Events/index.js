@@ -130,7 +130,9 @@ const Events = () => {
         // Overlap between at least two events
         if (nbOverlaps > 1) {
           overlapsFiltered.forEach((eventOverlaps, index) => {
-            idsTreated.push(eventOverlaps.id);
+            if (!idsTreated.includes(eventOverlaps.id)) {
+              idsTreated.push(eventOverlaps.id);
+            }
             preparedEvents.push(getTopLeftHeightOnEvent(eventOverlaps, nbOverlaps, index));
           });
         
