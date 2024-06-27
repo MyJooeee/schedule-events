@@ -7,7 +7,7 @@
   {
     "id": 2,
     "start": "17:00",
-    "duration": 180
+    "duration": 120
   },
   {
     "id": 3,
@@ -83,20 +83,5 @@
     "id": 17,
     "start": "14:00",
     "duration": 30
-  },
-  {
-    "id": 18,
-    "start": "19:00",
-    "duration": 120
-  },
-  {
-    "id": 19,
-    "start": "19:40",
-    "duration": 35
-  },
-  {
-    "id": 20,
-    "start": "19:00",
-    "duration": 55
   }
 ]
